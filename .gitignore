@@ -21,10 +21,9 @@ hs_err_pid*
 *.lck
 *.s3db-journal
 logs/
-
+proxies_good.json
 build/
-*SNAP*.jar
-*vk*pure*.jar
+*SNAP*.jar 
 
 .gradle
 .idea
