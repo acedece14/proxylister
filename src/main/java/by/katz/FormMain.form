@@ -1,37 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="by.katz.FormMain">
-  <grid id="27dc6" binding="pnlMain" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+  <tabbedpane id="88e81" binding="tabbedPane">
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
-    <properties/>
-    <border type="none"/>
+    <properties>
+      <tabLayoutPolicy value="0"/>
+      <tabPlacement value="1"/>
+    </properties>
+    <border type="bevel-lowered" title-justification="3" title-position="5">
+      <font/>
+      <title-color color="-4473925"/>
+    </border>
     <children>
-      <component id="68ba1" class="javax.swing.JTable" binding="tableData">
+      <grid id="bc30b" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
+          <tabbedpane title="Proxy lists"/>
         </constraints>
         <properties/>
-      </component>
-      <component id="91790" class="javax.swing.JLabel" binding="lblStatus">
+        <border type="none"/>
+        <children>
+          <grid id="27dc6" binding="pnlMain" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="91790" class="javax.swing.JLabel" binding="lblStatus">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Started"/>
+                </properties>
+              </component>
+              <component id="3420a" class="javax.swing.JButton" binding="btnStartCollect">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Update list"/>
+                </properties>
+              </component>
+              <scrollpane id="f522c">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="68ba1" class="javax.swing.JTable" binding="tableData">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="eefdf" binding="tabSites" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <tabbedpane title="SItes to check"/>
         </constraints>
-        <properties>
-          <text value="Started"/>
-        </properties>
-      </component>
-      <component id="3420a" class="javax.swing.JButton" binding="btnStartCollect">
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="b02df" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="9511f" class="javax.swing.JTextPane" binding="txtSites">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="50"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="8299b" class="javax.swing.JButton" binding="btnLoadSites">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Load"/>
+                </properties>
+              </component>
+              <component id="ca05b" class="javax.swing.JButton" binding="btnSaveSites">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Save"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="d9ac1" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <tabbedpane title="Magic" enabled="false"/>
         </constraints>
-        <properties>
-          <text value="Update list"/>
-        </properties>
-      </component>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
     </children>
-  </grid>
+  </tabbedpane>
 </form>

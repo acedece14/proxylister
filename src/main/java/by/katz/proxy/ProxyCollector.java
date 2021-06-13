@@ -1,6 +1,7 @@
-package by.katz;
+package by.katz.proxy;
 
 
+import by.katz.ICallback;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jsoup.Jsoup;
@@ -16,7 +17,7 @@ public class ProxyCollector {
     private final static Type TYPE_HASHMAP = new TypeToken<List<ProxyItem>>() {}.getType();
     private static final String URL_PROXIES = "https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list";
 
-    ProxyCollector(ICallback callback) {
+    public ProxyCollector(ICallback callback) {
 
         try {
             // getting data

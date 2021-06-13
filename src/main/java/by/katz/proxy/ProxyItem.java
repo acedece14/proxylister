@@ -1,5 +1,6 @@
-package by.katz;
+package by.katz.proxy;
 
+import by.katz.Settings;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;

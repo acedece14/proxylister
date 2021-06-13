@@ -1,5 +1,7 @@
 package by.katz;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+
 public class Main {
 
     public static void main(String[] a) {
@@ -8,8 +10,11 @@ public class Main {
 
     private Main() {
         System.out.println("Start...");
+
+        // ui
+        FlatDarculaLaf.setup();
+
         Settings.getInstance().loadSettings();
-        Settings settings = Settings.getInstance();
         new FormMain();
     }
 

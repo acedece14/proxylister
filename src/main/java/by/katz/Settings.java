@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-class Settings {
+public class Settings {
 
     private static File SETTINGS_FILE = new File("pr_ch_settings.json");
 
     private static Settings instance;
 
-    static Settings getInstance() {
+    public static Settings getInstance() {
         return instance == null ? instance = new Settings() : instance;
     }
 
@@ -32,7 +32,7 @@ class Settings {
 
     void loadSettings() {
         if (!SETTINGS_FILE.exists())
-            saveToJson();
+            saveSettings();
 
         try (FileReader fileReader = new FileReader(SETTINGS_FILE)) {
             instance = new Gson().fromJson(fileReader, Settings.class);
@@ -42,12 +42,17 @@ class Settings {
         }
     }
 
-    private void saveToJson() {
+    private void saveSettings() {
         try (FileWriter fileWriter = new FileWriter(SETTINGS_FILE)) {
             fileWriter.write(new GsonBuilder().setPrettyPrinting().create().toJson(this));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    void updateSites(List<String> sites) {
+        sitesToCheck = sites;
+        saveSettings();
     }
 }

@@ -1,5 +1,7 @@
 package by.katz;
 
+import by.katz.proxy.ProxyItem;
+
 import java.util.List;
 
 public interface ICallback {

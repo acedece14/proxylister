@@ -1,5 +1,7 @@
-package by.katz;
+package by.katz.proxy;
 
+import by.katz.ICallback;
+import by.katz.Settings;
 import com.google.gson.GsonBuilder;
 
 import java.io.FileWriter;
