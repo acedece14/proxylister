@@ -51,7 +51,7 @@ public class Settings {
         }
     }
 
-    void updateSites(List<String> sites) {
+    public void updateSites(List<String> sites) {
         sitesToCheck = sites;
         saveSettings();
     }

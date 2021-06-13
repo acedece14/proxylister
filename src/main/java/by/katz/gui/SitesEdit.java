@@ -1,4 +1,6 @@
-package by.katz;
+package by.katz.gui;
+
+import by.katz.Settings;
 
 import javax.swing.*;
 import java.util.Arrays;

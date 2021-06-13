@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="by.katz.FormMain">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="by.katz.gui.FormMain">
   <tabbedpane id="88e81" binding="tabbedPane">
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -59,7 +59,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="eefdf" binding="tabSites" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="eefdf" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
           <tabbedpane title="SItes to check"/>
         </constraints>

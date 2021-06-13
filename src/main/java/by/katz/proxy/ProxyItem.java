@@ -46,7 +46,7 @@ public class ProxyItem {
         return true;
     }
 
-    boolean checkProxyOnUrl(String urlString) {
+    private boolean checkProxyOnUrl(String urlString) {
         try {
             if (type.equals("https") || type.equals("http")) {
                 long startTime = System.currentTimeMillis();

@@ -1,6 +1,6 @@
-package by.katz;
+package by.katz.gui;
 
-import by.katz.proxy.ProxyCollector;
+import by.katz.Controller;
 import by.katz.proxy.ProxyItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
+
 public class FormMain
-        extends JFrame
-        implements ICallback {
+        extends JFrame {
 
     private static final java.lang.reflect.Type TYPE_LIST_PROXY = new TypeToken<List<ProxyItem>>() {}.getType();
-    private boolean running = false;
     private JPanel pnlMain;
     private JButton btnStartCollect;
     private JLabel lblStatus;
@@ -35,13 +35,14 @@ public class FormMain
     private JButton btnLoadSites;
     private JButton btnSaveSites;
     private JTabbedPane tabbedPane;
-    private JPanel tabSites;
+    private Controller controller;
 
 
-    FormMain() {
+    public FormMain(Controller controller) {
+        this.controller = controller;
 
         $$$setupUI$$$();
-        btnStartCollect.addActionListener(a -> btnStartClick());
+        btnStartCollect.addActionListener(a -> btnStartScanClick());
         btnLoadSites.addActionListener(a -> SitesEdit.load(txtSites));
         btnSaveSites.addActionListener(a -> SitesEdit.save(txtSites));
 
@@ -63,60 +64,29 @@ public class FormMain
         initDataInTable();
     }
 
-    private void btnStartClick() {
-
-
+    private void btnStartScanClick() {
         clearTable();
-        if (!running) {
-            running = true;
-
-            new Thread(() -> {
-                lblStatus.setText("Update starting...");
-                new ProxyCollector(this);
-            }).start();
-        } else lblStatus.setText("Already started");
+        controller.startScan();
     }
 
     private void clearTable() {
         DefaultTableModel model = (DefaultTableModel) tableData.getModel();
-        while (model.getRowCount() > 0)
-            model.removeRow(0);
+        if (model.getRowCount() > 0)
+            while (model.getRowCount() > 0)
+                model.removeRow(0);
     }
 
     private void initDataInTable() {
         try {
             FileReader fileReader = new FileReader("proxies_good.json");
             List<ProxyItem> goodProxies = new Gson().fromJson(fileReader, TYPE_LIST_PROXY);
-            onComplete(goodProxies);
+            setNewTableData(goodProxies);
         } catch (FileNotFoundException e) { lblStatus.setText(e.getLocalizedMessage()); }
     }
 
-    private void initTable() {
-        final DefaultTableModel model = (DefaultTableModel) tableData.getModel();
-        model.addColumn("Time");
-        model.addColumn("Address");
-        model.addColumn("Type");
-        model.addColumn("C");
-        final TableColumnModel columnModel = tableData.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(50);
-        columnModel.getColumn(1).setPreferredWidth(180);
-        columnModel.getColumn(2).setPreferredWidth(40);
-        columnModel.getColumn(3).setPreferredWidth(30);
 
+    public void setNewTableData(List<ProxyItem> goodProxies) {
 
-        tableData.getSelectionModel().addListSelectionListener(event -> {
-            String data = tableData.getValueAt(tableData.getSelectedRow(), 1).toString();
-            StringSelection stringSelection = new StringSelection(data);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
-            lblStatus.setText("Copied: " + data);
-            System.out.println("text copied");
-        });
-    }
-
-    @Override public void onComplete(List<ProxyItem> goodProxies) {
-        running = false;
-        lblStatus.setText("Loaded!");
         DefaultTableModel model = (DefaultTableModel) tableData.getModel();
 
         for (ProxyItem p : goodProxies) {
@@ -130,13 +100,36 @@ public class FormMain
         }
     }
 
-    @Override public void onGet(int count) {
-        lblStatus.setText("Get " + count + ", now checking...");
+    private void initTable() {
+        tableData.setSelectionMode(SINGLE_SELECTION);
+        tableData.setShowGrid(true);
+        final DefaultTableModel model = (DefaultTableModel) tableData.getModel();
+        model.addColumn("Time");
+        model.addColumn("Address");
+        model.addColumn("Type");
+        model.addColumn("C");
+        final TableColumnModel columnModel = tableData.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(180);
+        columnModel.getColumn(2).setPreferredWidth(40);
+        columnModel.getColumn(3).setPreferredWidth(30);
+
+
+        tableData.getSelectionModel().addListSelectionListener(event -> {
+            if (tableData.getModel().getRowCount() <= 0)
+                return;
+            String data = tableData.getValueAt(tableData.getSelectedRow(), 1).toString();
+            StringSelection stringSelection = new StringSelection(data);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+            lblStatus.setText("Copied: " + data);
+            System.out.println("text copied");
+        });
     }
 
-    @Override public void onError(String error) {
-        lblStatus.setText("Error: " + error);
-        running = false;
+
+    public void setStatus(String text) {
+        lblStatus.setText(text);
     }
 
     /**
@@ -167,23 +160,23 @@ public class FormMain
         pnlMain.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableData = new JTable();
         scrollPane1.setViewportView(tableData);
-        tabSites = new JPanel();
-        tabSites.setLayout(new BorderLayout(0, 0));
-        tabbedPane.addTab("SItes to check", tabSites);
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        tabSites.add(panel2, BorderLayout.CENTER);
+        panel2.setLayout(new BorderLayout(0, 0));
+        tabbedPane.addTab("SItes to check", panel2);
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.add(panel3, BorderLayout.CENTER);
         txtSites = new JTextPane();
-        panel2.add(txtSites, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+        panel3.add(txtSites, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         btnLoadSites = new JButton();
         btnLoadSites.setText("Load");
-        panel2.add(btnLoadSites, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel3.add(btnLoadSites, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnSaveSites = new JButton();
         btnSaveSites.setText("Save");
-        panel2.add(btnSaveSites, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JPanel panel3 = new JPanel();
-        panel3.setLayout(new BorderLayout(0, 0));
-        tabbedPane.addTab("Magic", panel3);
+        panel3.add(btnSaveSites, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new BorderLayout(0, 0));
+        tabbedPane.addTab("Magic", panel4);
         tabbedPane.setEnabledAt(2, false);
     }
 

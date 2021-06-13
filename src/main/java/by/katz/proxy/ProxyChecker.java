@@ -1,6 +1,5 @@
 package by.katz.proxy;
 
-import by.katz.ICallback;
 import by.katz.Settings;
 import com.google.gson.GsonBuilder;
 
@@ -16,14 +15,18 @@ class ProxyChecker {
     private static final String FILE_FOR_PROXIES = "proxies_good.json";
     private static final int N_THREADS = Settings.getInstance().getThreadCount();
 
-    ProxyChecker(List<ProxyItem> proxies, ICallback callback) {
+    ProxyChecker(List<ProxyItem> proxies, IProxiesCallback callback) {
 
         ExecutorService threadPool = Executors.newFixedThreadPool(N_THREADS);
 
         List<Future<ProxyItem>> futures = new ArrayList<>();
         for (ProxyItem p : proxies)
-            futures.add(CompletableFuture.supplyAsync(()
-                    -> p.checkProxy() ? p : null, threadPool));
+            futures.add(CompletableFuture.supplyAsync(() -> {
+                callback.onOneProxyCheck();
+                boolean res = p.checkProxy();
+                if (res) callback.onOneFullValidProxyFound();
+                return res ? p : null;
+            }, threadPool));
 
         List<ProxyItem> goodProxies = new ArrayList<>();
 
@@ -44,7 +47,7 @@ class ProxyChecker {
                 .collect(Collectors.toList());
         saveProxiesToJson(goodProxies);
 
-        callback.onComplete(goodProxies);
+        callback.onCompleteProxiesCheck(goodProxies);
     }
 
     private void saveProxiesToJson(List<ProxyItem> goodProxies) {
