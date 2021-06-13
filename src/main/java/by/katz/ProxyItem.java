@@ -14,12 +14,12 @@ import java.util.List;
 
 @Getter
 public class ProxyItem {
-
-    private static final String[] URL_STRINGS = {
-            "http://lurkmore.to",
-            //"https://www.tut.by",
-    };
-    public static final int MAX_TIMEOUT = 3000;
+    /*
+        private static final String[] URL_STRINGS = {
+                "http://lurkmore.to",
+                //"https://www.tut.by",
+        };*/
+    public static final int MAX_TIMEOUT = Settings.getInstance().getTimeToCheck();
 
     @Setter
     @SerializedName("response_time") private Double responseTime;
@@ -37,7 +37,8 @@ public class ProxyItem {
     }
 
     boolean checkProxy() {
-        for (String url : URL_STRINGS) {
+        final List<String> sitesToCheck = Settings.getInstance().getSitesToCheck();
+        for (String url : sitesToCheck) {
             if (!checkProxyOnUrl(url))
                 return false;
         }

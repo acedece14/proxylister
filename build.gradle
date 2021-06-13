@@ -25,14 +25,26 @@ dependencies {
 
 
 /*
-
         TASKS
-
  */
+
 
 task fatJar(type: Jar) {
 
-    baseName = '../../_ProxyList'
+    exclude 'META-INF/MANIFEST.MF'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/LICENSE*'
+    exclude 'META-INF/NOTICE*'
+    exclude 'META-INF/README*'
+    exclude 'META-INF/CHANGES*'
+    exclude 'META-INF/ABOUT*'
+    exclude 'changelog.txt'
+    exclude 'AUTHORS'
+    exclude 'LICENSE'
+    exclude '*.txt'
+    exclude '*.html'
 
     classifier = 'all'
     manifest {

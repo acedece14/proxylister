@@ -8,6 +8,8 @@ public class Main {
 
     private Main() {
         System.out.println("Start...");
+        Settings.getInstance().loadSettings();
+        Settings settings = Settings.getInstance();
         new FormMain();
     }
 

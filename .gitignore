@@ -36,4 +36,4 @@ test.*
 temp.*
 *.test
 
-sqlite2mysql/
+pr_ch_settings.json

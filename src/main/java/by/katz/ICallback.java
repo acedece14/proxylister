@@ -2,7 +2,7 @@ package by.katz;
 
 import java.util.List;
 
-public interface Callback {
+public interface ICallback {
 
     void onComplete(List<ProxyItem> goodProxies);
 
