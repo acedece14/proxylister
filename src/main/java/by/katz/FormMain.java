@@ -53,7 +53,7 @@ public class FormMain
         SitesEdit.load(txtSites);
 
         initTable();
-        setTitle("Proxy list");
+        setTitle("Proxylister");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(tabbedPane);
         pack();
