@@ -27,6 +27,8 @@ public class Settings {
     private int timeToCheck = 3000;
     @Getter
     private int threadCount = 50;
+    @Getter
+    private int pacServerPort = 8765;
 
     private Settings() { }
 
@@ -55,4 +57,5 @@ public class Settings {
         sitesToCheck = sites;
         saveSettings();
     }
+
 }

@@ -12,6 +12,10 @@ public class Main {
         Settings.getInstance().loadSettings();
 
         new Controller();
+
+        MyPacServer proxy = MyPacServer.getInstance();
+
+       // proxy.setProxy("178.63.17.151", "3128");
     }
 
 }

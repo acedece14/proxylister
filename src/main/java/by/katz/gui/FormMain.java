@@ -1,6 +1,7 @@
 package by.katz.gui;
 
 import by.katz.Controller;
+import by.katz.MyPacServer;
 import by.katz.proxy.ProxyItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -119,6 +120,9 @@ public class FormMain
             if (tableData.getModel().getRowCount() <= 0)
                 return;
             String data = tableData.getValueAt(tableData.getSelectedRow(), 1).toString();
+
+
+            MyPacServer.getInstance().setProxy(data.split(":")[0], data.split(":")[1]);
             StringSelection stringSelection = new StringSelection(data);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
