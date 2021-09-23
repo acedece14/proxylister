@@ -15,31 +15,32 @@ public class ProxyCollector {
 
     private final static Type TYPE_HASHMAP = new TypeToken<List<ProxyItem>>() {}.getType();
     private static final String URL_PROXIES = "https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list";
+    public static final int MAX_PROXYLIST_SIZE = 500;
 
     public ProxyCollector(IProxiesCallback callback) {
 
         try {
             // getting data
             String json = Jsoup.connect(URL_PROXIES)
-                    .ignoreContentType(true)
-                    .get()
-                    .body()
-                    .text();
+                .ignoreContentType(true)
+                .followRedirects(false)
+                .get()
+                .body()
+                .text();
             json = getParsedData(json);
 
-            // convert json 2 objs
+            // convert json2objs
             List<ProxyItem> proxies = new Gson().fromJson(json, TYPE_HASHMAP);
 
-            System.out.println("Total:" + proxies.size());
+            System.out.println("Total proxies in list: " + proxies.size());
             callback.onGetProxiesList(proxies.size());
 
-            // sort by resp time
-            proxies.sort(Comparator.comparing(ProxyItem::getResponseTime));
             // some viebons
             proxies = proxies.stream()
-                    .filter(p -> p.getType().equals("https") || p.getType().equals("http"))
-                    .limit(500)
-                    .collect(Collectors.toList());
+                .sorted(Comparator.comparing(ProxyItem::getResponseTime))
+               // .filter(p -> p.getType().equals("https") || p.getType().equals("http"))
+                .limit(MAX_PROXYLIST_SIZE)
+                .collect(Collectors.toList());
             // send to check
             new ProxyChecker(proxies, callback);
         } catch (IOException e) { callback.onError("Cant collect " + e.getLocalizedMessage());}

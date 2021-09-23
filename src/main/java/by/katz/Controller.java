@@ -8,7 +8,7 @@ import by.katz.proxy.ProxyItem;
 import java.util.List;
 
 public class Controller
-        implements IProxiesCallback {
+    implements IProxiesCallback {
 
     private FormMain formMain;
 
@@ -64,13 +64,13 @@ public class Controller
     }
 
 
-    @Override synchronized public void onOneProxyCheck() {
+    @Override public void onOneProxyCheck() {
         int percent = 100 * checkCounter / checkTotal;
         logStatus(String.format("Check status: %d/%d (%d%%) valid: %d",
-                checkCounter++, checkTotal, percent, validFound));
+            checkCounter++, checkTotal, percent, validFound));
     }
 
-    @Override synchronized public void onOneFullValidProxyFound() {
+    @Override public void onOneFullValidProxyFound() {
         validFound++;
     }
 }

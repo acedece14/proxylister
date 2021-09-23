@@ -4,10 +4,10 @@ import by.katz.Settings;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
@@ -34,7 +34,7 @@ public class ProxyItem {
 
     @Override public String toString() {
         return String.format("Proxy: resp= %-10s\t%s:%-20d\t'%-15s'\t'%s'}",
-                responseTime, host, port, type, country);
+            responseTime, host, port, type, country);
     }
 
     boolean checkProxy() {
@@ -47,31 +47,23 @@ public class ProxyItem {
     }
 
     private boolean checkProxyOnUrl(String urlString) {
+        final long startTime = System.currentTimeMillis();
         try {
-            if (type.equals("https") || type.equals("http")) {
-                long startTime = System.currentTimeMillis();
-                final URL weburl = new URL(urlString);
-                final Proxy webProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-                HttpURLConnection.setFollowRedirects(false);
-                final HttpURLConnection con = (HttpURLConnection) weburl.openConnection(webProxy);
-                con.setConnectTimeout(MAX_TIMEOUT);
-                con.setReadTimeout(MAX_TIMEOUT);
-                if (con.getInputStream() == null)
-                    return false;
-                final InputStream stream = con.getInputStream();
+            Proxy webProxy;
+            if (type.equals("https") || type.equals("http"))
+                webProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+            else if (type.contains("sock"))
+                webProxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(host, port));
+            else webProxy = new Proxy(Proxy.Type.DIRECT, new InetSocketAddress(host, port));
 
-                int len;
-                if ((len = stream.available()) > 1000) {
-                    byte[] readedBytes = new byte[len];
-                    int res = stream.read(readedBytes, 0, len);
-                    con.disconnect();
-                    setResponseTime((double) (System.currentTimeMillis() - startTime));
-                    String readed = new String(readedBytes);
-
-                    return getResponseTime() <= MAX_TIMEOUT;
-                } else con.disconnect();
-            }
-        } catch (IOException ignored) { }
+            final Document res = Jsoup.connect(urlString)
+                .followRedirects(false)
+                .proxy(webProxy)
+                .timeout(MAX_TIMEOUT)
+                .get();
+            setResponseTime((double) (System.currentTimeMillis() - startTime));
+            return res.head().toString().contains(new URL(urlString).getHost());
+        } catch (IOException ignored) { setResponseTime(-1.0);}
         return false;
     }
 }
