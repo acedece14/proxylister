@@ -3,6 +3,7 @@ package by.katz;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,7 @@ import java.util.concurrent.Executors;
 
 import static by.katz.Utils.readFromStream;
 
+@Log
 public class MyPacServer {
 
     private static final InetSocketAddress pacServerAddress = new InetSocketAddress(Settings.getInstance().getPacServerPort());
@@ -39,9 +41,7 @@ public class MyPacServer {
     private MyPacServer() {
         try {
             startServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     private void startServer() throws IOException {
@@ -69,10 +69,10 @@ public class MyPacServer {
     private class PacReqHandler implements HttpHandler {
 
         @Override public void handle(HttpExchange httpExchange) throws IOException {
-            System.out.println("request handler");
+            log.info("request handler");
             final String response = getResponse()
-                    .replace("%SERVER%", proxyHost)
-                    .replace("%PORT%", proxyPort);
+                .replace("%SERVER%", proxyHost)
+                .replace("%PORT%", proxyPort);
             httpExchange.sendResponseHeaders(200, response.length());
             final OutputStream os = httpExchange.getResponseBody();
             os.write(response.getBytes());
@@ -82,8 +82,8 @@ public class MyPacServer {
 
     private static String getResponse() throws IOException {
         final InputStream stream = MyPacServer.class
-                .getClassLoader()
-                .getResourceAsStream("pacResponse.txt");
+            .getClassLoader()
+            .getResourceAsStream("pacResponse.txt");
         return stream != null ? Utils.readFromStream(stream) : "";
     }
 }

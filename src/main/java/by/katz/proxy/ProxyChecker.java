@@ -2,6 +2,7 @@ package by.katz.proxy;
 
 import by.katz.Settings;
 import com.google.gson.GsonBuilder;
+import lombok.extern.java.Log;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -12,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static by.katz.proxy.ProxyItem.MAX_TIMEOUT;
+
+@Log
 class ProxyChecker {
 
     private static final String FILE_FOR_PROXIES = "proxies_good.json";
@@ -25,15 +29,14 @@ class ProxyChecker {
 
         allProxies.forEach(p -> threadPool.submit(() -> {
             callback.onOneProxyCheck();
-            if (p.checkProxy()) {
+            if (p.checkProxyByRealSites() && cdl.getCount() > 0) {
                 goodProxies.add(p);
                 callback.onOneFullValidProxyFound();
             }
             cdl.countDown();
         }));
-        try {
-            cdl.await();
-        } catch (InterruptedException e) { e.printStackTrace(); }
+        threadCheck(cdl);
+        try { cdl.await(); } catch (InterruptedException ignored) { }
         threadPool.shutdown();
 
         // sort
@@ -48,11 +51,22 @@ class ProxyChecker {
         callback.onCompleteProxiesCheck(sortedProxies);
     }
 
-    private void saveProxiesToJson(List<ProxyItem> goodProxies) {
+    private void threadCheck(CountDownLatch latch) {
+        new Thread(() -> {
+            long lastCheck = latch.getCount();
+            while (latch.getCount() != 0) {
+                try { Thread.sleep(MAX_TIMEOUT + MAX_TIMEOUT / 10); } catch (InterruptedException ignored) { }
+                if (lastCheck == latch.getCount()) {
+                    log.severe("timeout error " + latch.getCount());
+                    latch.countDown();
+                } else lastCheck = latch.getCount();
+            }
+        }).start();
+    }
 
+    private void saveProxiesToJson(List<ProxyItem> goodProxies) {
         try (FileWriter fw = new FileWriter(FILE_FOR_PROXIES)) {
             fw.write(new GsonBuilder().setPrettyPrinting().create().toJson(goodProxies));
         } catch (Exception ignored) {}
     }
-
 }

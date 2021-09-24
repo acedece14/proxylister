@@ -37,7 +37,7 @@ public class ProxyItem {
             responseTime, host, port, type, country);
     }
 
-    boolean checkProxy() {
+    boolean checkProxyByRealSites() {
         final List<String> sitesToCheck = Settings.getInstance().getSitesToCheck();
         for (String url : sitesToCheck) {
             if (!checkProxyOnUrl(url))
@@ -63,7 +63,7 @@ public class ProxyItem {
                 .get();
             setResponseTime((double) (System.currentTimeMillis() - startTime));
             return res.head().toString().contains(new URL(urlString).getHost());
-        } catch (IOException ignored) { setResponseTime(-1.0);}
+        } catch (IOException ignored) { }
         return false;
     }
 }

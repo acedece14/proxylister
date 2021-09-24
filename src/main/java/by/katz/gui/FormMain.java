@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import lombok.extern.java.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
+@Log
 public class FormMain
     extends JFrame {
 
@@ -127,7 +129,7 @@ public class FormMain
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
             lblStatus.setText("Copied: " + data);
-            System.out.println("text copied");
+            log.info("text copied");
         });
     }
 
